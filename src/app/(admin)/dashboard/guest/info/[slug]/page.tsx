@@ -98,10 +98,10 @@ export default function Page({ params }: { params: { slug: number } }) {
 	const router = useRouter()
 
 	React.useEffect(() => {
-		fetch('/api/getEmployee?id=' + params.slug)
+		fetch('/api/getGuest?id=' + params.slug)
 		.then((res) => res.json())
 		.then((data) => {
-			const user = data.user;
+			const user = data.guest;
 			console.log(user)
 			if(!user)
 			{
@@ -131,18 +131,18 @@ export default function Page({ params }: { params: { slug: number } }) {
 				},
 				{
 					key: '5',
-					label: 'Отдел',
-					children: user.department,
+					label: 'Документ',
+					children: user.document_number,
 				},
 				{
 					key: '6',
-					label: 'Должность',
-					children: user.position,
+					label: 'Причина посещения',
+					children: user.visit_purpose,
 				},
 				{
 					key: '7',
 					label: 'Статус',
-					children: !user.is_entered ? <Tag color="volcano">Не на работе</Tag> : (user.is_onBreak ? <Tag color="geekblue">Перерыв</Tag> : <Tag color="green">На объекте</Tag>),
+					children: !user.is_entered ? <Tag color="volcano">Не на работе</Tag> : <Tag color="green">На объекте</Tag>,
 				},
 				{
 					key: '8',
@@ -150,24 +150,9 @@ export default function Page({ params }: { params: { slug: number } }) {
 					children: user.lastEnteredAt || "Нет",
 				},
 				{
-					key: '9',
-					label: 'Посл. перерыв',
-					children: user.lastBreakAt || "Нет",
-				},
-				{
 					key: '10',
 					label: 'Посл. выход',
 					children: user.lastLeftAt || "Нет",
-				},
-				{
-					key: '11',
-					label: 'Предупреждения',
-					children: user.warns,
-				},
-				{
-					key: '12',
-					label: 'Посл. предупреждение',
-					children: user.lastWarnAt || "Нет",
 				},
 				{
 					key: '13',

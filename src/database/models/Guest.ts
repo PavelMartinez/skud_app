@@ -5,7 +5,7 @@ export interface GuestAttributes {
   id: number;
   surname: string;
   name: string;
-  last_name: string;
+  last_name?: string;
   photo_path?: string;
   document_number?: number;
   visit_purpose?: string;
@@ -28,7 +28,7 @@ export class Guest extends Model<GuestAttributes, GuestCreationAttributes> imple
   id!: number;
   surname!: string;
   name!: string;
-  last_name!: string;
+  last_name?: string;
   photo_path?: string;
   document_number?: number;
   visit_purpose?: string;
@@ -60,7 +60,7 @@ export class Guest extends Model<GuestAttributes, GuestCreationAttributes> imple
       },
       last_name: {
         type: DataTypes.STRING(255),
-        allowNull: false
+        allowNull: true
       },
       photo_path: {
         type: DataTypes.STRING(255),

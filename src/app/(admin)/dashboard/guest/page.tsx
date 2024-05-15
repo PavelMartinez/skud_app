@@ -37,14 +37,14 @@ const columns: TableProps<DataType>['columns'] = [
     key: 'last_name',
   },
   {
-    title: 'Департамент',
-    dataIndex: 'department',
-    key: 'department',
+    title: 'Документ',
+    dataIndex: 'document_number',
+    key: 'document_number',
   },
   {
-    title: 'Должность',
-    dataIndex: 'position',
-    key: 'position',
+    title: 'Цель прихода',
+    dataIndex: 'visit_purpose',
+    key: 'visit_purpose',
   },
   {
     title: 'Статус',
@@ -60,19 +60,13 @@ const columns: TableProps<DataType>['columns'] = [
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        <Link href={"/dashboard/employee/info/" + record.id}>Инфо</Link>
-		<Link href={"/dashboard/employee/info/" + record.id}>Изменить</Link>
+        <Link href={"/dashboard/guest/info/" + record.id}>Инфо</Link>
+		<Link href={"/dashboard/guest/info/" + record.id}>Изменить</Link>
       </Space>
     ),
   },
 ];
 
-const options = [
-	{ value: 1, label: 'Сотрудник' },
-	{ value: 2, label: 'Менеджер' },
-	{ value: 3, label: 'Старший менеджер' },
-	{ value: 4, label: 'Разработчик' }
-]
 
 interface NewSuccess {
 	message: string;
@@ -85,12 +79,7 @@ const App: React.FC = () => {
 	const session = useSession()
 	const [form] = Form.useForm();
 
-	const filteredOptions = React.useCallback(() => {
-		return options.filter(option => option.value <= Number(session.data?.user.role))
-	}, [session]);
-
 	const onFinish = (values: any) => {
-		console.log(session.data)
 		const data = { ...values, createdByUser: session.data?.user.id }
 		console.log('Received values of form: ', data);
 
@@ -98,16 +87,15 @@ const App: React.FC = () => {
 			surname: data.surname,
 			name: data.name,
 			last_name: data.last_name,
-			department: data.department,
-			position: data.position,
+			visit_purpose: data.visit_purpose,
+			document_number: data.document_number,
 			createdByUser: session.data?.user.id,
 			foreignId: data.foreignId,
-			role: data.role,
 			photo_path: data.photo[0].response.photo_path
 		}
 
 		setLoading(true)
-		fetch('/api/addEmployee', {
+		fetch('/api/addGuest', {
 			method: 'POST',
 			body: JSON.stringify(newData),
 		})
@@ -115,13 +103,13 @@ const App: React.FC = () => {
 		.then((data) => {
 			setNewSuccess({
 				message: stripIndents`
-				Сотрудник успешно добавлен. Сохраните его данные для входа в систему (Фамилия-Имя-Отчество_Логин_Пароль):
+				Гость успешно добавлен. Сохраните его данные для входа в систему (Фамилия-Имя-Отчество_Логин_Пароль):
 
 				${data.surname}-${data.name}-${data.last_name}_${data.username}_${data.password}
 				`
 			})
 			form.resetFields();
-			fetchUsers()
+			fetchGuests()
 		})
 	};
 
@@ -134,23 +122,26 @@ const App: React.FC = () => {
 	   	return e && e.fileList;
 	};
 
-	const fetchUsers = () => {
-		fetch('/api/getEmployees')
+	const fetchGuests = () => {
+		fetch('/api/getGuests')
 		.then((res) => res.json())
 		.then((data) => {
-			setData(data.users.map((item: any) => {
-					return {
-						...item,
-						key: item.id
-					}; 
-				}
-			))
+			if(data.guests)
+			{
+				setData(data.guests.map((item: any) => {
+						return {
+							...item,
+							key: item.id
+						}; 
+					}
+				))
+			}
 			setLoading(false)
 		})
 	}
 
 	React.useEffect(() => {
-		fetchUsers()
+		fetchGuests()
 	}, [])
 	return (
 		<>
@@ -161,7 +152,7 @@ const App: React.FC = () => {
 				wrapperCol={{ span: 14 }}
 				layout="horizontal"
 				disabled={loading} 
-				title='Добавить сотрудника'
+				title='Добавить гостя'
 				onFinish={onFinish}
 				form={form}
 			>
@@ -174,17 +165,14 @@ const App: React.FC = () => {
 				<Form.Item label="Отчество" name="last_name">
 					<Input />
 				</Form.Item>
-				<Form.Item label="Отдел" name="department">
+				<Form.Item label="Документ" name="document_number">
 					<Input />
 				</Form.Item>
-				<Form.Item label="Должность" name="position">
+				<Form.Item label="Цель прихода" name="visit_purpose">
 					<Input />
 				</Form.Item>
 				<Form.Item label="Внутренний номер" name="foreignId">
 					<Input />
-				</Form.Item>
-				<Form.Item label="Роль" name="role" rules={[{ required: true, message: 'Роль обязательна' }]}>
-					<Select options={filteredOptions()} />
 				</Form.Item>
 				<Form.Item label="Загрузить фото" name="photo" valuePropName="photo" rules={[{ required: true, message: 'Фотография обязательна' }]} required getValueFromEvent={normFile}>
 					<Upload action="/api/uploadPhoto" listType="picture" maxCount={1} accept="image/png, image/jpeg">

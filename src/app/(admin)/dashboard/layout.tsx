@@ -9,7 +9,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu, Watermark, theme } from 'antd';
 import { useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react';
 
@@ -53,7 +53,7 @@ const DashboardLayout = ({ children }: Props) => {
     router.push(`${item?.key}`)
   }
   const handleSignOut = async () => {
-	await signOut()
+	router.push("/api/auth/signout")
   }
 
   return (
@@ -62,9 +62,11 @@ const DashboardLayout = ({ children }: Props) => {
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={handleMenuClick}/>
       </Sider>
       <Layout>
-        <Content style={{ margin: '24px 50px 0' }}>
-          <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>{children}</div>
-        </Content>
+		<Watermark content="SKUD">
+			<Content style={{ margin: '24px 50px 0' }}>
+					<div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>{children}</div>
+			</Content>
+		</Watermark>
         <Footer style={{ textAlign: 'center' }}>{session.data?.user.surname} {session.data?.user.name} {session.data?.user.lastname} <Button onClick={handleSignOut} type="link">Выйти</Button></Footer>
       </Layout>
     </Layout>

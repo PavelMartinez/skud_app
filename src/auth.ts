@@ -5,7 +5,7 @@ import { Adapter } from "next-auth/adapters";
 import Credentials from "next-auth/providers/credentials"
 import authConfig from "./auth.config";
 
-const authOptions: NextAuthConfig = {
+const authOptions = {
     ...authConfig,
     providers: [
         Credentials({
@@ -42,32 +42,7 @@ const authOptions: NextAuthConfig = {
             User: database.models.Users,
         }
     }) as Adapter,
-    callbacks: {
-        async jwt({ token, user }) {
-            /* Step 1: update the token based on the user object */
-            if (user) {
-                token.role = user.role;
-                token.surname = user.surname;
-                token.lastname = user.lastname;
-                token.gender = user.gender;
-            }
-            return token;
-        },
-        // @ts-ignore
-        async session({ session, token, user }) {
-            /* Step 2: update the session.user based on the token object */
-            return {
-                ...session,
-                user: {
-                    ...session.user,
-                    role: token.role,
-                    surname: token.surname,
-                    lastname: token.lastname,
-                    gender: token.gender
-                },
-            }
-        }
-    }
 }
  
-export const { auth, handlers, signIn, signOut } = NextAuth(authOptions)
+// @ts-ignore
+export const { auth, handlers, signIn, signOut } = NextAuth(authOptions) as never

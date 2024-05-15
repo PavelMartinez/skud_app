@@ -1,9 +1,10 @@
 "use client"; 
 
 import { ConfigProvider } from "antd";
-import { SessionProvider } from "next-auth/react";
+import { Session } from "next-auth";
+import { SessionProvider, SessionProviderProps } from "next-auth/react";
 
-export function Providers({ children, session }: { children: React.ReactNode, session?: any }) {
+export function Providers({ children, session }: { children: React.ReactNode, session: Session }) {
 	return (
 		<SessionProvider session={session}>
 			<ConfigProvider

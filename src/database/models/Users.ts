@@ -2,7 +2,7 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 
 export interface UsersAttributes {
-  id: string;
+  id?: string;
   name?: string;
   email?: string;
   emailVerified?: Date;
@@ -21,7 +21,7 @@ export type UsersOptionalAttributes = "name" | "email" | "emailVerified" | "imag
 export type UsersCreationAttributes = Optional<UsersAttributes, UsersOptionalAttributes>;
 
 export class Users extends Model<UsersAttributes, UsersCreationAttributes> implements UsersAttributes {
-  id!: string;
+  id?: string;
   name?: string;
   email?: string;
   emailVerified?: Date;
@@ -37,8 +37,8 @@ export class Users extends Model<UsersAttributes, UsersCreationAttributes> imple
   static initModel(sequelize: Sequelize.Sequelize): typeof Users {
     return Users.init({
       id: {
-        type: DataTypes.CHAR(36),
-        allowNull: false,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
       },
       name: {

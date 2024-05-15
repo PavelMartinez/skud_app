@@ -1,4 +1,5 @@
 // Импортируйте необходимые типы и модули
+import { NextAuthResult, Session } from 'next-auth';
 import './globals.css'
 import { Providers } from "./providers";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
@@ -9,17 +10,15 @@ export default function RootLayout({
   session, // Добавляем session в параметры
 }: Readonly<{
   children: React.ReactNode;
-  session?: any;
+  session?: Session;
 }>) {
   return (
     <html lang="en">
-      <Providers session={session}>
         <body>
-          <Providers session={session}>
+          <Providers session={session ? session : null}>
             <AntdRegistry>{children}</AntdRegistry>
           </Providers>
         </body>
-      </Providers>
     </html>
   );
 }
