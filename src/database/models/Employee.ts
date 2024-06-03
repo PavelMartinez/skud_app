@@ -28,6 +28,7 @@ export type EmployeeOptionalAttributes = "id" | "last_name" | "photo_path" | "de
 export type EmployeeCreationAttributes = Optional<EmployeeAttributes, EmployeeOptionalAttributes>;
 
 export class Employee extends Model<EmployeeAttributes, EmployeeCreationAttributes> implements EmployeeAttributes {
+  [x: string]: any;
   id!: number;
   surname!: string;
   name!: string;
@@ -125,7 +126,7 @@ export class Employee extends Model<EmployeeAttributes, EmployeeCreationAttribut
         defaultValue: 0
       },
       userId: {
-        type: DataTypes.CHAR(36),
+        type: DataTypes.UUID,
         allowNull: false
       }
     }, {

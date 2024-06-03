@@ -43,7 +43,7 @@ export class Log extends Model<LogAttributes, LogCreationAttributes> implements 
         allowNull: false
       },
       issuedByUser: {
-        type: DataTypes.CHAR(36),
+        type: DataTypes.UUID,
         allowNull: false
       }
     }, {

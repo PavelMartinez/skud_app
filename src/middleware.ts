@@ -9,26 +9,28 @@ import {
 	authRoutes,
 	publicRoutes,
 	userRoutePrefix,
-	adminRoutePrefix
+	adminRoutePrefix,
+	apiPrefix
   } from '@/lib/routes'
 
 export default auth((req) => {
-  const { nextUrl } = req;
-  const pathname = nextUrl.pathname;
+	const { nextUrl } = req;
+	const pathname = nextUrl.pathname;
 
-  const isLoggedIn = !!req.auth;
-  const isAdmin = Number(req.auth?.user.role) > 1;
+	const isLoggedIn = !!req.auth;
+	const isAdmin = Number(req.auth?.user.role) > 1;
 
-  const redirectTo = (path: string) => Response.redirect(new URL(path, nextUrl));
+	const redirectTo = (path: string) => Response.redirect(new URL(path, nextUrl));
 
-  const isApiRoute = pathname.startsWith(apiAuthPrefix);
-  const isPublicRoute = publicRoutes.includes(pathname);
-  const isAuthRoute = authRoutes.includes(pathname);
-  const isAdminRoute = pathname.startsWith(adminRoutePrefix)
-  const isUserRoute = pathname.startsWith(userRoutePrefix)
+	const isAuthApiRoute = pathname.startsWith(apiAuthPrefix);
+	const isApiRoute = pathname.startsWith(apiPrefix);
+	// const isPublicRoute = publicRoutes.includes(pathname);
+	const isAuthRoute = authRoutes.includes(pathname);
+	const isAdminRoute = pathname.startsWith(adminRoutePrefix)
+	const isUserRoute = pathname.startsWith(userRoutePrefix)
 
-  if (isPublicRoute || isApiRoute) return;
-  // below this isPublicRoute and isApiRoute can only be false
+	if (isAuthApiRoute) return;
+  // below this isPublicRoute can only be false
 
 	// Redirect non-logged-in users trying to access protected routes
 
@@ -40,17 +42,19 @@ export default auth((req) => {
 		return redirectTo(`/api/auth/signin?callbackUrl=${encodedCallbackUrl}`);
 	}
 
+	if(isApiRoute) return;
+
+	if (!isAdminRoute && !isUserRoute) {
+		if (isAdmin) return redirectTo("/dashboard");
+		else return redirectTo("/worker");
+	}
+
 	// Redirect logged-in, non-admin users trying to access restricted admin routes
 	if (!isAdmin && !isUserRoute) {
 		nextUrl.searchParams.set("error", "Access Denied");
 		nextUrl.pathname = "/api/auth/error";
 
 		return Response.redirect(nextUrl);
-	}
-
-	if (!isAdminRoute && !isUserRoute) {
-		if (isAdmin) return redirectTo("/dashboard");
-		else return redirectTo("/worker");
 	}
 
 	return;

@@ -10,7 +10,7 @@ const sequelize = new Sequelize(process.env.MYSQL_DATABASE as string, process.en
 })
 
 initModels(sequelize);
-// sequelize.sync()
+sequelize.sync()
 
 export default {
     models: {

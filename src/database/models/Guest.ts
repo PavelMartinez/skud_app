@@ -105,7 +105,7 @@ export class Guest extends Model<GuestAttributes, GuestCreationAttributes> imple
         allowNull: true
       },
       userId: {
-        type: DataTypes.CHAR(36),
+        type: DataTypes.UUID,
         allowNull: false
       }
     }, {

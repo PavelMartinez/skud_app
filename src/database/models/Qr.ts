@@ -17,6 +17,7 @@ export type QrOptionalAttributes = "id" | "employeeId" | "guestId" | "is_expired
 export type QrCreationAttributes = Optional<QrAttributes, QrOptionalAttributes>;
 
 export class Qr extends Model<QrAttributes, QrCreationAttributes> implements QrAttributes {
+  [x: string]: any;
   id!: number;
   employeeId?: number;
   guestId?: number;

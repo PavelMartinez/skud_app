@@ -30,7 +30,7 @@ const DashboardLayout = ({ children }: Props) => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-			<Content style={{ margin: '24px 50px 0', display: "flex", justifyContent: "center", minWidth: "600px", alignItems: "center" }}>
+			<Content style={{ margin: '24px 50px 0', display: "flex", justifyContent: "center", alignItems: "center" }}>
 					<div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>{children}</div>
 			</Content>
       <Footer style={{ textAlign: 'center' }}>{session.data?.user.surname} {session.data?.user.name} {session.data?.user.lastname} <Button onClick={handleSignOut} type="link">Выйти</Button></Footer>
