@@ -19,14 +19,27 @@ export const GET = auth(async function GET(req) {
 			}]
 		});
 
-		if(thisEmployee)
+		const thisGuest = await database.models.Guest.findOne({
+			where: {
+				userId: userAuth.id
+			},
+			include: [{
+				model: database.models.Qr,
+				as: "Qrs"
+			}]
+		});
+
+		const user = thisEmployee || thisGuest;
+
+		if(user)
 		{
-			const validQr = thisEmployee.Qrs.filter((item: {
+			// @ts-ignore
+			const validQr = user.Qrs.filter((item: {
 				type: string; expiredAt: string | number | Date; 
 				}) => { return new Date(item.expiredAt) >= new Date() && item.type == "enterleave"});
 			if(validQr.length > 0)
 			{
-				return NextResponse.json({ qr: validQr[0], employee: thisEmployee })
+				return NextResponse.json({ qr: validQr[0], user: user, isGuest: user == thisGuest })
 			}
 			// Создаём новый QR
 			const secret_key = generator.generate({
@@ -37,15 +50,16 @@ export const GET = auth(async function GET(req) {
 			const hashed_secret_key = await bcrypt.hash(secret_key, 12);
 
 			const currentDate = new Date();
-			currentDate.setMinutes(currentDate.getMinutes() + 1);
+			currentDate.setHours(currentDate.getHours() + 1);
 
-			const newQR = await thisEmployee.createQr({
+			// @ts-ignore
+			const newQR = await user.createQr({
 				type: "enterleave",
 				secret_key: hashed_secret_key,
 				expiredAt: currentDate
 			})
 			console.log(newQR);
-			return NextResponse.json({ qr: newQR, employee: thisEmployee });
+			return NextResponse.json({ qr: newQR, user: user, isGuest: user == thisGuest });
 		}
 	}
   	return NextResponse.json({ message: "Not authenticated" }, { status: 401 })

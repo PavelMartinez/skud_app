@@ -21,6 +21,7 @@ export async function GET(request: Request) {
         if(QR)
         {
             const user = QR.IdQrEmployee || QR.IdQrGuest;
-            return Response.json({ user: user, isGuest: user == QR.IdQrGuest ? 1 : 0 });
+            return Response.json({ user: user, isGuest: user == QR.IdQrGuest ? 1 : 0, isBreak: QR.type == "break" });
         }
+        return Response.json({ message: "Неверный QR" }, { status: 404 });
 }

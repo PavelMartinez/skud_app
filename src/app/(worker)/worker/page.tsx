@@ -1,13 +1,15 @@
 "use client";
 
 import { EmployeeAttributes } from "@/database/models/Employee";
+import { GuestAttributes } from "@/database/models/Guest";
 import { QrAttributes } from "@/database/models/Qr";
 import { Button, QRCode, Skeleton, Space, Tabs, TabsProps } from "antd";
 import React from "react";
 
 interface DataType {
 	qr?: QrAttributes;
-	employee?: EmployeeAttributes;
+	user?: EmployeeAttributes | GuestAttributes;
+	isGuest: boolean;
 }
 
 export default function Page() {
@@ -27,6 +29,7 @@ export default function Page() {
 		{
 			key: '2',
 			label: 'Перерыв',
+			disabled: enterQrData?.isGuest ? true : false,
 			children: 
 				<Space direction="vertical">
 					{!breakQrData && <Button type="primary" onClick={() => { fetchBreakQR() }}>Выйти на перерыв</Button>}
@@ -119,9 +122,9 @@ export default function Page() {
 			
 			{!enterLoading && 
 			<Space direction="vertical" align="center" style={{ width: "100%" }}>
-				<div>{enterQrData?.employee?.surname}</div>
-				<div>{enterQrData?.employee?.name}</div>
-				<div>{enterQrData?.employee?.last_name}</div>
+				<div>{enterQrData?.user?.surname}</div>
+				<div>{enterQrData?.user?.name}</div>
+				<div>{enterQrData?.user?.last_name}</div>
 			</Space>
 			}
 		</>
