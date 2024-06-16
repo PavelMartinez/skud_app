@@ -1,5 +1,6 @@
 import database from "@/database/database"
 import { Employee } from "@/database/models/Employee"
+import { Guest } from "@/database/models/Guest"
 
 export async function GET(request: Request) {
     const countAllEmployee = await Employee.count({
@@ -21,12 +22,12 @@ export async function GET(request: Request) {
         }
     })
 
-    const countAllGuest = await Employee.count({
+    const countAllGuest = await Guest.count({
         where: {
             is_blocked: 0
         }
     })
-    const countEnteredGuest = await Employee.count({
+    const countEnteredGuest = await Guest.count({
         where: {
             is_blocked: 0,
             is_entered: 1
