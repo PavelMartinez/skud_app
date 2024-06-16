@@ -34,7 +34,8 @@ function getItem(
 const items: MenuItem[] = [
   getItem('Главная', '/dashboard', <UserOutlined />),
   getItem('Сотрудники', '/dashboard/employee', <UserOutlined />),
-  getItem('Гости', '/dashboard/guest', <TeamOutlined />)
+  getItem('Гости', '/dashboard/guest', <TeamOutlined />),
+  getItem('Статистика', '/dashboard/stats', <TeamOutlined />)
 ];
 
 interface Props {

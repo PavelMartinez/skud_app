@@ -7,66 +7,6 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { stripIndents } from 'common-tags';
 
-interface DataType {
-	id: number;
-    key: string;
-    surname: string;
-    name: string;
-    last_name: string;
-	department: string;
-	position: string;
-	status: string;
-	is_entered: 1 | 0;
-	is_onBreak: 1 | 0;
-}
-
-const columns: TableProps<DataType>['columns'] = [
-  {
-    title: 'Фамилия',
-    dataIndex: 'surname',
-    key: 'surname',
-  },
-  {
-    title: 'Имя',
-    dataIndex: 'name',
-    key: 'surname',
-  },
-  {
-    title: 'Отчество',
-    dataIndex: 'last_name',
-    key: 'last_name',
-  },
-  {
-    title: 'Департамент',
-    dataIndex: 'department',
-    key: 'department',
-  },
-  {
-    title: 'Должность',
-    dataIndex: 'position',
-    key: 'position',
-  },
-  {
-    title: 'Статус',
-    key: 'status',
-	render: (_: any, record: DataType) => {
-		if(!record.is_entered) return (<Tag color="volcano">Не на работе</Tag>)
-		if(record.is_entered) return (<Tag color="green">На объекте</Tag>)
-		if(record.is_onBreak) return (<Tag color="geekblue">Перерыв</Tag>)
-	}
-  },
-  {
-    title: 'Действия',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        <Link href={"/dashboard/employee/info/" + record.id}>Инфо</Link>
-		<Link href={"/dashboard/employee/edit/" + record.id}>Изменить</Link>
-      </Space>
-    ),
-  },
-];
-
 const options = [
 	{ value: 1, label: 'Сотрудник' },
 	{ value: 2, label: 'Менеджер' },
@@ -78,8 +18,8 @@ interface NewSuccess {
 	message: string;
 }
 
-const App: React.FC = () => {
-	const [data, setData] = React.useState([])
+export default function Page({ params }: { params: { slug: number } }) {
+	const [data, setData] = React.useState<any>()
 	const [loading, setLoading] = React.useState(true)
 	const [newSuccess, setNewSuccess] = React.useState<NewSuccess>()
 	const session = useSession()
@@ -102,12 +42,12 @@ const App: React.FC = () => {
 			position: data.position,
 			createdByUser: session.data?.user.id,
 			foreignId: data.foreignId,
-			role: data.role,
-			photo_path: data.photo[0].response.photo_path
+			photo_path: data.photo ? data.photo[0].response.photo_path : null,
+            employeeId: params.slug
 		}
 
 		setLoading(true)
-		fetch('/api/addEmployee', {
+		fetch('/api/editEmployee', {
 			method: 'POST',
 			body: JSON.stringify(newData),
 		})
@@ -115,13 +55,11 @@ const App: React.FC = () => {
 		.then((data) => {
 			setNewSuccess({
 				message: stripIndents`
-				Сотрудник успешно добавлен. Сохраните его данные для входа в систему (Фамилия-Имя-Отчество_Логин_Пароль):
-
-				${data.surname}-${data.name}-${data.last_name}_${data.username}_${data.password}
+				Информация о сотруднике отредактирована
 				`
 			})
 			form.resetFields();
-			fetchUsers()
+			fetchUser()
 		})
 	};
 
@@ -134,34 +72,37 @@ const App: React.FC = () => {
 	   	return e && e.fileList;
 	};
 
-	const fetchUsers = () => {
-		fetch('/api/getEmployees')
+	const fetchUser = () => {
+        setLoading(true)
+		fetch('/api/getEmployee?id=' + params.slug)
 		.then((res) => res.json())
 		.then((data) => {
-			setData(data.users.map((item: any) => {
-					return {
-						...item,
-						key: item.id
-					}; 
-				}
-			))
-			setLoading(false)
+			const user = data.user;
+            form.setFieldsValue({
+                surname: user?.surname,
+                name: user?.name,
+                last_name: user?.last_name,
+                department: user?.department,
+                position: user?.position,
+                foreignId: user?.foreignId,
+                role: user?.role
+            })
+            console.log(user)
+            setLoading(false)
 		})
 	}
 
 	React.useEffect(() => {
-		fetchUsers()
+		fetchUser()
 	}, [])
 	return (
 		<>
-			<Table columns={columns} dataSource={data} pagination={{ position: ["bottomRight"] }} loading={loading}/>
-
 			<Form
 				labelCol={{ span: 4 }}
 				wrapperCol={{ span: 14 }}
 				layout="horizontal"
 				disabled={loading} 
-				title='Добавить сотрудника'
+				title='Редактировать сотрудника'
 				onFinish={onFinish}
 				form={form}
 			>
@@ -183,17 +124,17 @@ const App: React.FC = () => {
 				<Form.Item label="Внутренний номер" name="foreignId">
 					<Input />
 				</Form.Item>
-				<Form.Item label="Роль" name="role" rules={[{ required: true, message: 'Роль обязательна' }]}>
+				{/* <Form.Item label="Роль" name="role" rules={[{ required: true, message: 'Роль обязательна' }]}>
 					<Select options={filteredOptions()} />
-				</Form.Item>
-				<Form.Item label="Загрузить фото" name="photo" valuePropName="photo" rules={[{ required: true, message: 'Фотография обязательна' }]} required getValueFromEvent={normFile}>
+				</Form.Item> */}
+				<Form.Item label="Загрузить фото" name="photo" valuePropName="photo" getValueFromEvent={normFile}>
 					<Upload action="/api/uploadPhoto" listType="picture" maxCount={1} accept="image/png, image/jpeg">
 						<Button>Выбрать файл</Button>
 					</Upload>
 				</Form.Item>
 				<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
 					<Button type="primary" htmlType="submit">
-						Добавить
+						Сохранить
 					</Button>
 				</Form.Item>
 			</Form>
@@ -202,5 +143,3 @@ const App: React.FC = () => {
 		</>
 	)
 }
-
-export default App;

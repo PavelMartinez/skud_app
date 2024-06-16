@@ -61,7 +61,7 @@ const columns: TableProps<DataType>['columns'] = [
     render: (_, record) => (
       <Space size="middle">
         <Link href={"/dashboard/guest/info/" + record.id}>Инфо</Link>
-		<Link href={"/dashboard/guest/info/" + record.id}>Изменить</Link>
+		<Link href={"/dashboard/guest/edit/" + record.id}>Изменить</Link>
       </Space>
     ),
   },

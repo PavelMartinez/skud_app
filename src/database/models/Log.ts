@@ -20,6 +20,7 @@ export class Log extends Model<LogAttributes, LogCreationAttributes> implements 
   guestId?: number;
   action!: 'createdQr' | 'enteredQr' | 'leftQr' | 'leftOnBreakQr' | 'enteredAfterBreakQr';
   issuedByUser!: number;
+    createdAt: string | number | Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Log {
