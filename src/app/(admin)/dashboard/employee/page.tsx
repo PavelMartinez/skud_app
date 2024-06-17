@@ -135,7 +135,7 @@ const App: React.FC = () => {
 	};
 
 	const fetchUsers = () => {
-		fetch('/api/getEmployees')
+		fetch('/api/getEmployees', { cache: 'no-store' })
 		.then((res) => res.json())
 		.then((data) => {
 			setData(data.users.map((item: any) => {
