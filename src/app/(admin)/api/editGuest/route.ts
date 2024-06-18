@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { rename } from "fs/promises";
-import { Guest } from "@/database/models/Guest";
 import database from "@/database/database";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {

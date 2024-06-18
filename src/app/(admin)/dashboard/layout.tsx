@@ -2,18 +2,18 @@
 
 import React, { useState } from 'react';
 import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
   TeamOutlined,
   UserOutlined,
+  QrcodeOutlined,
+  PieChartOutlined,
+  BarcodeOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Button, Layout, Menu, Watermark, theme } from 'antd';
 import { useRouter } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -32,10 +32,11 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('Главная', '/dashboard', <UserOutlined />),
+  getItem('Сканирование', '/dashboard', <QrcodeOutlined />),
   getItem('Сотрудники', '/dashboard/employee', <UserOutlined />),
   getItem('Гости', '/dashboard/guest', <TeamOutlined />),
-  getItem('Статистика', '/dashboard/stats', <TeamOutlined />)
+  getItem('Статистика', '/dashboard/stats', <PieChartOutlined />),
+  getItem('Панель прохода', '/worker', <BarcodeOutlined />)
 ];
 
 interface Props {

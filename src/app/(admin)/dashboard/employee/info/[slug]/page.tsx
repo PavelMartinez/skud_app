@@ -4,7 +4,6 @@ import React from 'react';
 import { Descriptions, Tag, Image, Skeleton, Result, Button, Table } from 'antd';
 import type { DescriptionsProps, TableProps } from 'antd';
 import { useRouter } from 'next/navigation'
-import Title from 'antd/lib/typography/Title';
 import Link from 'next/link';
 
 interface DataTypeLog {

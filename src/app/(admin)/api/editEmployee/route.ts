@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { rename } from "fs/promises";
-import { Employee } from "@/database/models/Employee";
+import database from "@/database/database";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
 	const data = await req.json()
@@ -15,15 +15,15 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
                 path.join(process.cwd(), "public/assets/" + newFilename)
             );
         } catch (error) {
-            console.log("Error occured ", error);
             return NextResponse.json({ Message: "Failed", status: 500 });
         }
     
         data.photo_path = newFilename;
     }
+    console.log(data.photo_path);
 
     try {
-        const updatedEmployee = await Employee.findByPk(data.employeeId)
+        const updatedEmployee = await database.models.Employee.findByPk(data.employeeId)
     
         if(updatedEmployee)
         {
@@ -32,9 +32,11 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
             updatedEmployee.last_name = data.last_name;
             updatedEmployee.position = data.position;
             updatedEmployee.department = data.department;
-            updatedEmployee.foreignId = data.foreign_id;
+            updatedEmployee.foreignId = data.foreignId;
             if(data.photo_path)
+            {
                 updatedEmployee.photo_path = data.photo_path;
+            }
 
             await updatedEmployee.save();
             return NextResponse.json({ Message: "Success", status: 200 });
@@ -45,6 +47,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
         }
     } catch(err)
     {
+        console.error(err)
         return NextResponse.json({ Message: "Error", status: 500 });
     }
 }; 

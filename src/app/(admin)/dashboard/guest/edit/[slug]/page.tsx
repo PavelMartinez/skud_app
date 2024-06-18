@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Alert, Button, Cascader, Checkbox, ColorPicker, DatePicker, Form, Input, Radio, Select, Slider, Space, Switch, Table, Tag, TreeSelect, Upload } from 'antd';
-import type { TableProps } from 'antd';
-import Link from 'next/link';
+import { Alert, Button, Form, Input, Upload } from 'antd';
 import { useSession } from 'next-auth/react';
 import { stripIndents } from 'common-tags';
 
